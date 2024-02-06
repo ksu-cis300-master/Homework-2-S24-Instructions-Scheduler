@@ -16,11 +16,11 @@ The qualifications of the workers are given in files of a certain format. Your p
 
 ### 1.1. Input File Format
 
-The input file should be a plain text file in which each line contains a number of fields separated by commas. Some of these fields may be empty. The file should contain at least two lines, and each line should contain the same number of fields (at least one). Note that if files in this format are viewed in typical spreadsheet applications, the fields are organized into columns.
+The input file should be a plain text file in which each line contains a number of fields separated by commas. Some of these fields may be empty. The file should contain at least two lines, and each line should contain the same number of fields. Note that if files in this format are viewed in typical spreadsheet applications, the fields are organized into columns.
 
-The first line of the file should contain column headings, separated by commas. The first heading is for a column containing worker names - this heading may be anything (or empty), as it will be unused by the program. The subsequent headings are the names of the different tasks. Thus, if there are *n* tasks, the first line will contain *n*+1 fields.
+The first line of the file should contain column headings, separated by commas. The first heading is for a column containing worker names - this heading may be anything (or empty), as it will be unused by the program. The subsequent headings are the names of the different tasks. Thus, if there are *n* tasks, the first line will contain *n*+1 fields. We will refer to these tasks as tasks 0, 1, ..., *n*-1; i.e., the second field corresponds to task 0, etc.
 
-The following lines of the file contain the workers' names and qualifications. The first field of each line will contain the name of a worker. Each subsequent field will indicate whether the worker is qualified for each of the tasks 0 through *n*-1, in order. A nonempty field indicates that the worker is qualified for that task, and an empty field indicates that they are not qualified for that task. Thus, for example, the line:
+The following lines of the file contain the workers' names and qualifications. The first field of each line will contain the name of a worker. Each subsequent field will indicate whether the worker is qualified for the task corresponding to that column. A nonempty field indicates that the worker is qualified for that task, and an empty field indicates that they are not qualified for that task. Thus, for example, the line:
 
 ```
 Pat,,x,x,,,x,
@@ -35,7 +35,9 @@ Sample input files are provided in the **Data** folder of your repository for th
 
 This file also consists of a number of lines of plain text, and each line contains fields separated by commas. The first line contains column headings. Its first field contains the string, "Day", and successive fields contain the names of the tasks provided in the input file. Thus, the first line of the output file should be identical to the first line of the input file, except for the first field.
 
-Each of the remaining lines contains the schedule for one day. The first field contains the day number, starting with 1 (in the second line) and continuing for the number of days required. Subsequent fields in each line each contain the name of the worker that is assigned the corresponding task on that day. If some task has no worker assigned for that day, that field is empty. Thus, if the first line is:
+Each of the remaining lines contains the schedule for one day. The first field contains the day number, starting with 1 (in the second line) and continuing for the number of days required. Subsequent fields in each line each contain the name of the worker that is assigned the corresponding task on that day. If some task has no worker assigned for that day, that field is empty. 
+
+For example, if the first line is:
 
 ```
 Day,Lead,Backup,Guitar,Bassoon,Drums
@@ -70,7 +72,7 @@ Using the Design window, you will need to design a GUI resembling the following:
 
 <img src="initial-gui.png" alt="The initial GUI." style="zoom:67%;" />
 
-At the top is a **MenuStrip**. Both "File" and "Schedule Length:" are **MenuItem**s, but the "10" is in a **TextBox** (use the drop-down menu marked "Type Here" to select **MenuItem** or **TextBox**, as appropriate). The "File" menu should contain the following menu items:
+At the top is a **MenuStrip**. Both "File" and "Schedule Length:" are **MenuItem**s, but the "10" is in a **TextBox** (use the drop-down menu marked "Type Here" to select **MenuItem** or **TextBox**, as appropriate, before typing in the text). The "File" menu should contain the following menu items:
 
 - Open Data File
 - Compute Schedule
@@ -78,14 +80,16 @@ At the top is a **MenuStrip**. Both "File" and "Schedule Length:" are **MenuItem
 
 The first of these menu items should be enabled initially, but the other two should be disabled. Make the **TextBox** in the **MenuStrip** read-only using its **ReadOnly** property.
 
-Below the **MenuStrip** is a **TabControl**. In order to cause the **TabControl** to fill the entire remaining area, click the drop-down to the right of its **Dock** property, then click the large button in the center of the drop-down menu. To set the contents of the tabs, click the **TabPages** property, then click the "..." button to its right. This will open a window with the two tabs listed in the list on its left side. Click each of these tabs, and change the following properties in the window on the right:
+Below the **MenuStrip** is a **TabControl**. In order to cause the **TabControl** to fill the entire remaining area, click the drop-down to the right of its **Dock** property, then click the large button in the center of the drop-down menu. To set the contents of the tabs, click the **TabPages** property, then click the "..." button to its right. This will open a window with the two tabs listed in the list on its left side. For each of these tabs, click the tab name in the left panel and change the following properties in the panel on the right:
 
 - **Text**: The text to be displayed in the tab (see the figure above).
 - **(Name)**: This should be changed to meet the [naming convention](https://cis300.cs.ksu.edu/appendix/style/naming/index.html) for a graphical control.
 
 After both tabs are changed in this way, click the "OK" button.
 
-To set the contents of each tab page, first click the tab to select that page, then add a **ListView** to the page. Set its **Dock** property to fill the tab page, and set its **View** property to **Details** - this will cause it to display its contents arranged in a grid. 
+To set the contents of each tab page, first click the tab to select that page, then add a **ListView** to the page. Set its **Dock** property to fill the tab page, and set its **View** property to **Details** - this will cause it to display its contents arranged in a grid. Finally, set its **GridLines** property to **True** so that lines will be drawn between rows and columns of the grid.
+
+**Note:** At times, you may find it difficult to select a particular control on the form. If this is the case, you can use the `Tab` key to step through the controls one at a time.
 
 Besides the visible controls, you will also need to add an **OpenFileDialog** for selecting an input file and a **SaveFileDialog** for selecting an output file. For each of these dialogs, set the **FileName** property to the empty string, and set the **Filter** property to the following:
 
@@ -113,11 +117,11 @@ Two more of the form's properties need to be changed to make it behave correctly
 
 Here we describe the behavior that will need to be implemented in code (see [Section 6. Coding Requirements](#6-coding-requirements)).
 
-Clicking the "Schedule Length:" menu item in the main form should cause the **ScheduleLengthDialog** to be displayed. The value in the **NumericUpDown** should be the same as the current value within the **TextBox** in the main form. The user may then set this value to any positive integer value no greater than 1000. If the user either presses the `Enter` key or clicks the "OK" button, the dialog should close, and the value in the **TextBox** should be set to the value from the dialog's **NumericUpDown**. If the user closes the dialog by clicking the 'X' in the upper-right corner, nothing in the main form should change.
+Clicking the "Schedule Length:" menu item in the main form should cause the **ScheduleLengthDialog** to be displayed as a modal dialog. The value in the **NumericUpDown** should be the same as the current value within the **TextBox** in the main form. The user may then set this value to any positive integer value no greater than 1000. If the user either presses the `Enter` key or clicks the "OK" button, the dialog should close, and the value in the **TextBox** should be set to the value from the dialog's **NumericUpDown**. If the user closes the dialog by clicking the 'X' in the upper-right corner, nothing in the main form should change.
 
 Clicking the "Open Data File" menu item should cause the **OpenFileDialog** to be displayed. It should not display a file name the first time it is shown, but subsequently, it should show the name of the last input file selected. The drop-down above the "Open" and "Cancel" buttons should read, "CSV spreadsheet files (\*.csv)", by default, though clicking it should allow "All files (\*.\*)" to be selected.
 
-If the user selects a file, the program should attempt to read that file to obtain a list of workers and the tasks they are qualified to perform (see [Section 1.1. Input File Format](#11-input-file-format) above). If the file is read successfully, the "Compute Schedule" menu item should be enabled, the "Save Schedule" menu item should be disabled, and the data loaded from the CSV file should be displayed in the **ListView** contained inside the "Schedule Data" tab page, which should be displayed, and and data contained within the other **ListView** should be removed. For example, opening the provided data file, "10-10.csv" should cause the GUI to look as follows:
+If the user selects a file, the program should attempt to read that file to obtain a list of workers and the tasks they are qualified to perform (see [Section 1.1. Input File Format](#11-input-file-format) above). If the file is read successfully, the "Compute Schedule" menu item should be enabled, the "Save Schedule" menu item should be disabled, and the data loaded from the CSV file should be displayed in the **ListView** contained inside the "Schedule Data" tab page, which should be displayed, and any data contained within the other **ListView** should be removed. For example, opening the provided data file, "10-10.csv" should cause the GUI to look as follows:
 
 <img src="gui-after-open.png" alt="The GUI after 10-10.csv is opened." style="zoom:67%;" />
 
@@ -134,13 +138,15 @@ This message should indicate the minimum number of times any worker was schedule
 
 <img src="computed-schedule.png" alt="The 10-day schedule generated from 10-10.csv." style="zoom:67%;" />
 
-If the "Save Schedule" menu item is selected (when it is enabled), the computed schedule the **SaveFileDialog** should be displayed. If the user selects a file, the schedule should be written to the selected file in the format described in [Section 1.2. Output File Format](#1.2. Output File Format). If the file is written successfully, the message "File successfully saved." should be shown in a **MessageBox**. If any exception is thrown during the writing of the file, it should be displayed in a **MessageBox**.
+If the "Save Schedule" menu item is selected (when it is enabled), the **SaveFileDialog** should be displayed. It should not display a file name the first time it is shown, but subsequently, it should show the name of the last output file selected. The drop-down above the "Open" and "Cancel" buttons should read, "CSV spreadsheet files (\*.csv)", by default, though clicking it should allow "All files (\*.\*)" to be selected.
+
+If the user selects a file, the schedule should be written to the selected file in the format described in [Section 1.2. Output File Format](#1.2. Output File Format). If the file is written successfully, the message "File successfully saved." should be shown in a **MessageBox**. If any exception is thrown during the writing of the file, it should be displayed in a **MessageBox**.
 
 ## 4. Scheduling Algorithm and Data Structures
 
 In order to attempt to meet the scheduling goals, we will store the workers in a modified queue. The modification will allow us to dequeue the first (i.e., nearest to the front) worker qualified for a certain task. Thus, for each day, we will iterate through the tasks, scheduling a worker for each task on that day. We find the worker to schedule for that task by dequeuing the first worker qualified for that task. We then enqueue that worker to the back of the queue. Thus, the algorithm will always give preference to those workers who have been idle the longest. However, this algorithm will not always produce an optimal schedule.
 
-We will implement this modified queue using a *doubly-linked list*. A doubly-linked list is similar to a linked list, but each cell in the list contains a reference to the *previous* cell in the list, in addition to the reference to the next cell in the list. Furthermore, we will use two *header cells* - one at the front and the other at the back. These header cells won't contain meaningful data, but will simply be used to keep track of the beginning and end of the list. The doubly-linked lists therefore is structured as follows:
+We will implement this modified queue using a *doubly-linked list*. A doubly-linked list is similar to a linked list, but each cell in the list contains a reference to the *previous* cell in the list, in addition to the reference to the next cell in the list. Furthermore, we will use two *header cells* - one at the front and the other at the back. These header cells won't contain meaningful data, but will simply be used to keep track of the beginning and end of the list. The doubly-linked list therefore is structured as follows:
 
 ![A doubly-linked list.](doubly-linked-list.png)
 
@@ -150,13 +156,13 @@ A doubly-linked list simplifies the process of finding a cell to delete - we no 
 
 ![Deleting a cell from a doubly-linked list.](delete.png)
 
-Note that because we are using header (which will never be deleted) cells at the front and back, there will always be cells preceding and following the cell we are deleting.
+Note that because we are using header cells (which will never be deleted) at the front and back, there will always be cells preceding and following the cell we are deleting.
 
-Inserting a cell is a little more involved for a doubly-linked lists because more references need to be changed. First, we set the links in the cell we are inserting to the cells that are to precede and follow it:
+Inserting a cell is a little more involved for a doubly-linked list because more references need to be changed. First, we set the links in the cell we are inserting to the cells that are to precede and follow it:
 
 ![Inserting a cell into a doubly-linked list - part 1.](insert1.png)
 
-Then update the links in the preceding and following cells to refer to the cell being inserted:
+Then we update the links in the preceding and following cells to refer to the cell being inserted:
 
 ![Inserting a cell into a doubly-linked list - part 2.](insert2.png)
 
@@ -171,8 +177,6 @@ Your program should contain seven classes, as shown in the following class diagr
 The **UserInterface** class defines the main GUI. The **ScheduleLengthDialog** class defines the dialog used to change the length of the schedule to be generated. The **ScheduleIO** class is a **static** class containing methods for reading and writing files. Instances of the **Worker** class represent individual workers. Instances of the **Schedule** class represent individual schedules. The **WorkerQueue** class defines the modified queue used to implement the scheduling algorithm, as outlined in [Section 4. Scheduling Algorithm and Data Structures](#4. Scheduling Algorithm and Data Structures). Instances of the **DoublyLinkedList** cell class are individual cells of a doubly-linked list. Each of these is described in more detail in [Section 6. Coding Requirements](#6. Coding Requirements) below.
 
 Note that some of the fields and properties are shown in the above diagram as labels on arrows. This indicates that the class where the arrow begins contains a field or property with the arrow's label as its name, and the class where the arrow leads is the type of that field or property. For example, `_lengthDialog` is a **private** field of type **ScheduleLengthDialog** within the **UserInterface** class. Similarly, double-headed arrows indicate collections. For example, `_workers` is a collection (in this case, an array) of **Workers** within the **UserInterface** class.
-
-The **LinkedListCell\<T\>** class is the same as the one you were to write for Lab Assignment 10. It has been included in the start code, and you will not need to change it. The **Scheduler** class will contain  methods for reading the input files and computing the schedule. The **Worker** class will represent a single worker. The **WorkerQueue** class will be the modified queue mentioned under "Scheduling Algorithm" above. Finally, the **UserInterface** class will implement the user interface. 
 
 The names of **private** fields and some **public** members in your program don't need to match the names shown above as long as they obey the [naming conventions for this course](http://people.cs.ksu.edu/~rhowell/DataStructures/redirect/naming). However, in order for the unit test code to compile, all **public** members of the **Schedule**, **Worker**, **WorkerQueue**, and **DoublyLinkedListCell** classes must match those shown.
 
@@ -194,24 +198,24 @@ You will need the following **private** field:
 
 You will need the following **public** properties:
 
-- **Name**: Gets the worker's name as a **string**. Use the default implementation with a **private set** accessor.
+- **Name**: Gets the worker's name as a **string**. Use the default implementation with no **set** accessor.
 - **TimesScheduled**: Gets or sets an **int** property giving the number of times the worker has been scheduled. Use the default implementation.
 
 #### 6.1.3. Constructor
 
-You will need a **public** constructor that you will use to initialize the worker's name and qualifications. Recall that the name of a constructor is the same as the name of the class that contains it, and that a return type isn't supplied. It will take as its only parameter a **string**[ ] whose first element gives the worker's name, and whose subsequent elements indicate the worker's qualifications. Specifically, element *i*+1 will be a nonempty string if the worker is qualified for task *i*; otherwise it will be the empty string (note that the empty string is a **string** with length 0; i.e., it is "", not **null**). The length of the **bool**[ ] field will therefore need to be one less than the length of the **string**[ ] parameter.
+You will need a **public** constructor that you will use to initialize the worker's name and qualifications. Recall that the name of a constructor is the same as the name of the class that contains it, and that a return type isn't supplied. It will take as its only parameter a **string[&nbsp;]** whose first element gives the worker's name, and whose subsequent elements indicate the worker's qualifications. Specifically, element *i*+1 will be a nonempty string if the worker is qualified for task *i*; otherwise it will be the empty string (note that the empty string is a **string** with length 0; i.e., it is "", not **null**). The length of the **bool[&nbsp;]** field will therefore need to be one less than the length of the **string[&nbsp;]** parameter.
 
 If the given **string[&nbsp;]** is **null**, throw an **ArgumentNullException**. If it is non-**null** but has a length of 0, throw an **ArgumentException**.
 
 #### 6.1.4. A public IsQualified method
 
-This method will take as its only parameter an **int** identifying the task, and it will return a **bool** indicating whether this **Worker** is qualified for the given task.. If the given **int** is outside the bounds of the **bool[&nbsp;]** field, throw an **ArgumentException**.
+This method will take as its only parameter an **int** identifying the task, and it will return a **bool** indicating whether this **Worker** is qualified for the given task. If the given **int** is outside the bounds of the **bool[&nbsp;]** field, throw an **ArgumentException**.
 
 ### 6.2. The DoublyLinkedListCell Class
 
 Each instance of this class will implement a single cell of a doubly-linked list. This class is *not* generic; i.e., it has no type parameter. Instead, each cell will store a **Worker** as its data item.  You will need to define three **public** properties and a **public** constructor.
 
-#### 6.2.1 Properties
+#### 6.2.1. Properties
 
 You will need to define the following **public** properties:
 
@@ -254,7 +258,7 @@ This class needs one **private** field, one **public** property, one **public** 
 
 #### 6.4.1. private field
 
-The **private** field should be a **readonly string\[&nbsp;\]\[&nbsp;]** containing the schedule. This is an array of arrays; i.e., each element is a **string[&nbsp;]**. Each of these **string[&nbsp;]**s will contain a schedule for one day. The **string** at index *i* of the **string[&nbsp;]** at location *k* (i.e., element \[*k*\]\[*i*\] of the **string\[&nbsp;\]\[&nbsp;\]**) will be the name of the6. **Worker** assigned to task *i*. 
+The **private** field should be a **readonly string\[&nbsp;\]\[&nbsp;]** containing the schedule. This is an array of arrays; i.e., each element is a **string[&nbsp;]**. Each of these **string[&nbsp;]**s will contain a schedule for one day. The **string** at index *i* of the **string[&nbsp;]** at location *k* (i.e., element \[*k*\]\[*i*\] of the **string\[&nbsp;\]\[&nbsp;\]**) will be the name of the **Worker** assigned to task *i*. 
 
 #### 6.4.2. public property
 
@@ -267,15 +271,15 @@ An [indexer](https://cis300.cs.ksu.edu/appendix/syntax/indexers/index.html) allo
 - An indexer always has the name **this**.
 - **this** is always followed by a nonempty parameter list enclosed in square brackets. In this case, the parameter list will consist of two **int** parameters giving a day within the schedule and a task number.
 
-The type of the indexer should be **string**. It should have a **get** accessor that returns the element of the **string\[&nbsp;\]\[&nbsp;\]** field corresponding to the given day and task. This will allow user code to get the name of the worker assigned to the given task on the given day by indexing into the schedule with the day and task number, as if the schedule were a 2-dimensional array. The indexer should not have a **set** accessor.
+The type of the indexer should be **string**. It should have a **get** accessor that returns the element of the **string\[&nbsp;\]\[&nbsp;\]** field corresponding to the given day (where the first day is indicated by 0) and task. This will allow user code to get the name of the worker assigned to the given task on the given day by indexing into the schedule with the day and task number, as if the schedule were a 2-dimensional array. The indexer should not have a **set** accessor.
 
 #### 6.4.4. A private method to get a WorkerQueue containing the Workers
 
-This method should be **static**; hence, it won't be able to access the field, the property, or the indexer (you won't need any of these). It should take as its only parameter a **Worker[&nbsp;]** containing the workers to place into the queue. It should return a **WorkerQueue** containing these workers. As you place each worker into the queue, set its **TimesScheduled** to 0.
+This method should be **static**; hence, it won't be able to access the field, the property, or the indexer (you won't need any of these). It should take as its only parameter a **Worker[&nbsp;]** containing the workers to place into the queue. It should return a **WorkerQueue** containing these workers. As you place each worker into the queue, set its **TimesScheduled** property to 0.
 
 #### 6.4.5. A private method to build a single day of the schedule
 
-This method should also be **static**. It should take as its parameters a **WorkerQueue** containing the workers to schedule and an **int** giving the number of tasks. It should return a **string[&nbsp;]** whose length is the number of tasks. Element *i* of this array should give the name of the worker assigned task *i*, where *i* is a nonnegative integer less than the number of tasks. Follow the algorithm provided in [Section 4. Scheduling Algorithm and Data Structures](#4. Scheduling Algorithm and Data Structures). If no qualified worker is found for some task, place the empty string into the corresponding location of the array to be returned. Whenever a qualified worker is added to the schedule, increment its **TimesScheduled** property.
+This method should also be **static**. It should take as its parameters a **WorkerQueue** containing the workers to schedule and an **int** giving the number of tasks. It should return a **string[&nbsp;]** whose length is the number of tasks. Element *i* of this array should give the name of the worker assigned to task *i*, where *i* is a nonnegative integer less than the number of tasks. Follow the algorithm provided in [Section 4. Scheduling Algorithm and Data Structures](#4. Scheduling Algorithm and Data Structures). If no qualified worker is found for some task, place the empty string into the corresponding location of the array to be returned. Whenever a qualified worker is added to the schedule, increment its **TimesScheduled** property.
 
 #### 6.4.6. Constructor
 
@@ -308,7 +312,7 @@ This method should take as its only parameter a **string** giving the name of th
 return (t, w);
 ```
 
-If the given **string** is **null**, throw an **ArgumentNullException**. Otherwise, read the given file using [**File.ReadAllLines**](https://learn.microsoft.com/en-us/dotnet/api/system.io.file.readalllines?view=net-6.0), then check to see if the file has the minimum number of lines required - if not, throw the appropriate exception as stated in [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI). Then use the first line's [**Split**](https://learn.microsoft.com/en-us/dotnet/api/system.string.split?view=net-6.0#system-string-split(system-char())) method to split it into fields delimited by commas (you can pass `','` as this method's only parameter). **Split** will return a **string**[ ] whose elements contain the separate fields. You won't need the first field; hence, you will need to copy the other fields to a new array containing one fewer location - this will be the array of task names that you will eventually return. For each subsequent line of the file, split it into an array of fields in the same way. Check to see that the number fields in each line is 1 more than the number of tasks; if not, throw the appropriate exception as outlined in [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI). From each array of fields, you can construct a new **Worker**, and place it in a **Worker[&nbsp;]** to be returned later. Note that because the first line of the file does not contain the description of a worker, the indices in the **string[&nbsp;]** containing the lines of the file and the **Worker[&nbsp;]** accumulating the workers will differ by 1.
+If the given **string** is **null**, throw an **ArgumentNullException**. Otherwise, read the given file using [**File.ReadAllLines**](https://learn.microsoft.com/en-us/dotnet/api/system.io.file.readalllines?view=net-6.0), then check to see if the file has the minimum number of lines required - if not, throw the appropriate exception as stated in [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI). Then use the first line's [**Split**](https://learn.microsoft.com/en-us/dotnet/api/system.string.split?view=net-6.0#system-string-split(system-char()) method to split it into fields delimited by commas (you can pass `','` as this method's only parameter). **Split** will return a **string[&nbsp;]** whose elements contain the separate fields. You won't need the first field; hence, you will need to copy the other fields to a new array containing one fewer location - this will be the array of task names that you will eventually return. For each subsequent line of the file, split it into an array of fields in the same way. Check to see that the number fields in each line is 1 more than the number of tasks; if not, throw the appropriate exception as outlined in [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI). From each array of fields, you can construct a new **Worker**, and place it in a **Worker[&nbsp;]** to be returned later. Note that because the first line of the file does not contain the description of a worker, the indices in the **string[&nbsp;]** containing the lines of the file and the **Worker[&nbsp;]** accumulating the workers will differ by 1.
 
 This method should do no exception handling.
 
@@ -322,7 +326,7 @@ This method should take the following parameters:
 
 It should return nothing. If any of the parameters are **null**, throw an **ArgumentNullException**. 
 
-To do the I/O within this method, you will need to use a [**StreamWriter**](https://learn.microsoft.com/en-us/dotnet/api/system.io.streamwriter?view=net-6.0) and a **using** block as described in [Advanced Text File I/O](https://cis300.cs.ksu.edu/io/advanced-text-file/index.html). Write one field at a time using the **StreamWriter**'s [**Write**](https://learn.microsoft.com/en-us/dotnet/api/system.io.streamwriter.write?view=net-6.0#system-io-streamwriter-write(system-string)) method, including commas as described in [Section 1.2. Output File Format](#1.2. Output File Format). At the end of each line, call the **StreamWriter**'s [**WriteLine**](https://learn.microsoft.com/en-us/dotnet/api/system.io.textwriter.writeline?view=net-6.0#system-io-textwriter-writeline) method with an empty parameter list. Recall that you can obtain the name of the worker schedule for task *i* on day *k* by indexing into the schedule with *k* and *i* as if it were a 2-dimensional array.
+To do the I/O within this method, you will need to use a [**StreamWriter**](https://learn.microsoft.com/en-us/dotnet/api/system.io.streamwriter?view=net-6.0) and a **using** block as described in [Advanced Text File I/O](https://cis300.cs.ksu.edu/io/advanced-text-file/index.html). Write one field at a time using the **StreamWriter**'s [**Write**](https://learn.microsoft.com/en-us/dotnet/api/system.io.streamwriter.write?view=net-6.0#system-io-streamwriter-write(system-string)) method, including commas as described in [Section 1.2. Output File Format](#1.2. Output File Format). At the end of each line, call the **StreamWriter**'s [**WriteLine**](https://learn.microsoft.com/en-us/dotnet/api/system.io.textwriter.writeline?view=net-6.0#system-io-textwriter-writeline) method with an empty parameter list. Recall that you can obtain the name of the worker schedule for task *i* on day *k* by indexing into the schedule with *k* and *i* as if it were a 2-dimensional array. Keep in mind that days within the schedule are indexed beginning at 0, but will start at 1 in the output file.
 
 ### 6.6. The ScheduleLengthDialog Class
 
@@ -397,7 +401,7 @@ If any exception is thrown in Step 1 above, instead of completing the remaining 
 
 #### 6.7.6. A method to display the statistics
 
-This method should take no parameters and return nothing. It is responsible for computing the maximum and minimum number of times a worker was scheduled as well as how many workers were left unscheduled and displaying them in a **MessageBox** (see [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI)). 
+This method should take no parameters and return nothing. It is responsible for computing the maximum and minimum number of times a worker was scheduled, as well as how many workers were left unscheduled, and displaying them in a **MessageBox** (see [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI)). 
 
 #### 6.7.7. An event handler for the "Compute Schedule" menu item
 
