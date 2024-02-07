@@ -300,7 +300,7 @@ This class should be **static**. It will need two **static** fields and two **pu
 This class needs the following fields:
 
 - A **public static readonly string** giving the string to use for the first column of the schedules displayed in the GUI and the output files. This string should be "Day".
-- A **private static readonly int** giving the minimum number of lines that should be contained in an input file (2).
+- A **private const int** giving the minimum number of lines that should be contained in an input file (2).
 
 Use these fields, rather than the literals `"Day"` or `2` in the code that follows.
 
