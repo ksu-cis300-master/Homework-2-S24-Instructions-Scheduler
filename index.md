@@ -64,7 +64,7 @@ Note that no code is provided other than the unit test code. You will need to wr
 
 ## 3. User Interface
 
-In this section, we will describe the look and behavior of the GUI that you are to design. We will first outline what you will need to build using the Design window. Then we will describe the required behavior of the GUI. You will need to provide code to implement this behavior (see [Section 6. Coding Requirements](#6-coding-requirements)). The [demo video]() also illustrates the expected look and behavior.
+In this section, we will describe the look and behavior of the GUI that you are to design. We will first outline what you will need to build using the Design window. Then we will describe the required behavior of the GUI. You will need to provide code to implement this behavior (see [Section 6. Coding Requirements](#6-coding-requirements)). The [demo video](https://youtu.be/8DspyTnX4cw?si=vzUacZjj1fw5vUV3) also illustrates the expected look and behavior.
 
 ### 3.1. Manual User Interface Design
 
@@ -415,7 +415,7 @@ This method should first display the **SaveFileDialog**. If the user selects a f
 
 Unit tests have been provided to test your **Worker**, **DoublyLinkedListCell**, **WorkerQueue**, and **Schedule** classes. Follow the instructions given in Homework Assignment 1 to order the unit tests. 
 
-Once all the unit tests have passed, you will need to test the remainder of your program interactively. You should do at least all of the tests shown in the [Demo video]() using the test data files provided. You should also try opening the following files to make sure the proper exception, with the proper message (see [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI)), is displayed. Specifically, the following files should display **MessageBox**es containing **IOException**s with the following messages:
+Once all the unit tests have passed, you will need to test the remainder of your program interactively. You should do at least all of the tests shown in the [Demo video](https://youtu.be/8DspyTnX4cw?si=vzUacZjj1fw5vUV3) using the test data files provided. You should also try opening the following files to make sure the proper exception, with the proper message (see [Section 3.2. Behavior of the GUI](#3.2. Behavior of the GUI)), is displayed. Specifically, the following files should display **MessageBox**es containing **IOException**s with the following messages:
 
 - **error-empty.csv**: The file doesn't have enough lines.
 - **error-no-workers.csv**: The file doesn't have enough lines.
